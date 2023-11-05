@@ -15,12 +15,12 @@ class DessertViewModel : ViewModel() {
 
     fun updateImageOnClick() {
         _uiState.update{
-            val dessertToShow = determineDessertToShow(dessertList, it.dessertsSold)
+            val dessertIndex = determineDessertToShow(it.dessertsSold)
             it.copy(
                 revenue = it.revenue + it.currentDessertPrice,
                 dessertsSold = it.dessertsSold + 1,
-                currentDessertImageId = dessertToShow.imageId,
-                currentDessertPrice = dessertToShow.price
+                currentDessertImageId = dessertList[dessertIndex].imageId,
+                currentDessertPrice = dessertList[dessertIndex].price
             )
         }
     }
@@ -29,13 +29,12 @@ class DessertViewModel : ViewModel() {
      * Determine which dessert to show.
      */
     private fun determineDessertToShow(
-        desserts: List<Dessert>,
         dessertsSold: Int
-    ): Dessert {
-        var dessertToShow = desserts.first()
-        for (dessert in desserts) {
-            if (dessertsSold >= dessert.startProductionAmount) {
-                dessertToShow = dessert
+    ): Int {
+        var dessertIndex = 0
+        for (index in dessertList.indices) {
+            if (dessertsSold >= dessertList[index].startProductionAmount) {
+                dessertIndex = index
             } else {
                 // The list of desserts is sorted by startProductionAmount. As you sell more desserts,
                 // you'll start producing more expensive desserts as determined by startProductionAmount
@@ -45,6 +44,6 @@ class DessertViewModel : ViewModel() {
             }
         }
 
-        return dessertToShow
+        return dessertIndex
     }
 }
